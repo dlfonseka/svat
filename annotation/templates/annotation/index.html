@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+
+    <body>
+        <div>
+            {% if annotation_list %}
+            <ul>
+                {% for annotation in annotation_list %}
+                <li>{{error}} {{annotation.annotation_start_time}}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p>No annotations recorded. </p>
+            {% endif %}
+        </div>
+
+        <div>
+            {% if video_list %}
+            <ul>
+                {% for video in video_list %}
+                <li>{{video}}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p>No videos uploaded. </p>
+            {% endif %}
+        </div>
+
+        <div>
+        {% if annotation_model_form %}
+        {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
+        {% if annotation_errors %}{{annotation_errors}} {% endif %}
+        <form action="{% url 'annotation:add_annotation' %}", method="post">
+            {% csrf_token %}
+            {{annotation_model_form.non_field_errors}}
+            {{annotation_model_form}}
+            <input type='submit' value='Add Annotation'/>
+        </form>
+        {% endif %}
+        </div>
+
+        <div>
+            {% if video_model_form %}
+            {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
+            {% if video_errors %}{{video_errors}} {% endif %}
+            <form action="{% url 'annotation:add_video' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{video_model_form.non_field_errors}}
+                {{video_model_form.as_p}}
+                <input type='submit' value='Add Video'/>
+            </form>
+            {% endif %}
+            </div>
+
+
+    </body>
+</html>
