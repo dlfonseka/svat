@@ -11,7 +11,6 @@ class Video(models.Model):
     def __str__(self):
         return self.video.name
 
-
 class Tools(models.Model):
     tools = models.JSONField() #TODO: is this right
 
