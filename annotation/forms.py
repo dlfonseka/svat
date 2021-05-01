@@ -6,6 +6,7 @@ class AnnotationForm(forms.ModelForm):
         model = Annotation
         exclude = []
 
+
 class VideoForm(forms.ModelForm):
     class Meta:
         model = Video

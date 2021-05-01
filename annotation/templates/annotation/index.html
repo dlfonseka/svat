@@ -3,22 +3,25 @@
 
 <html>
     <head>
-        
+        <script src="{% static 'js/videoplayer.js' %}"></script>
         <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
+        <script src="{% static 'js/annotation.js' %}"></script>
     </head>
 
     <body>
+
 
         <video
             id="my-video"
             class="video-js"
             controls
             preload="auto"
+            autoplay
             width="640"
             height="264"
             data-setup="{}"
         >
-            <source src='{{MEDIA_URL}}/video.mp4' type="video/mp4" />
+            <source src='{{MEDIA_URL}}{{most_recent_video}}' type="video/mp4" />
             <!-- <source src="MY_VIDEO.webm" type="video/webm" /> -->
             <p class="vjs-no-js">
             To view this video please enable JavaScript, and consider upgrading to a
@@ -28,15 +31,25 @@
             >
             </p>
         </video>
-
         <script src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
+        <script>
+            var myPlayer = videojs('my-video');
+            myPlayer.currentTime(parseFloat("{{timestamp}}"));
+        </script>
+<!-- 
+        <script>
 
-
+            // set
+            //myPlayer.currentTime(10); // 2 minutes into the video
+            
+            //var whereYouAt2 = myPlayer.currentTime();
+            //console.log(whereYouAt2)
+        </script> -->
         <div>
             {% if annotation_list %}
             <ul>
                 {% for annotation in annotation_list %}
-                <li>{{error}} {{annotation.annotation_start_time}}</li>
+                <!-- <li>{{error}} {{annotation.annotation_text}}</li> -->
                 {% endfor %}
             </ul>
             {% else %}
@@ -48,7 +61,7 @@
             {% if video_list %}
             <ul>
                 {% for video in video_list %}
-                <li>{{video}}</li>
+                <!-- <li>{{video}}</li> -->
                 {% endfor %}
             </ul>
             {% else %}
@@ -63,11 +76,30 @@
         <form action="{% url 'annotation:add_annotation' %}", method="post">
             {% csrf_token %}
             {{annotation_model_form.non_field_errors}}
-            {{annotation_model_form}}
-            <input type='submit' value='Add Annotation'/>
+
+            <div class="fieldWrapper">
+                {{ annotation_model_form.annotation_text.errors }}
+                <label for="{{ annotation_model_form.annotation_text.id_for_label }}">Annotation text:</label>
+                {{ annotation_model_form.annotation_text }}
+            </div>
+            <div class="fieldWrapper">
+                {{ annotation_model_form.annotation_detail.errors }}
+                <label for="{{ annotation_model_form.annotation_detail.id_for_label }}">Annotation detail:</label>
+                {{ annotation_model_form.annotation_detail }}
+            </div>
+            <div class="fieldWrapper">
+                {{ annotation_model_form.annotation_timestamp.errors }}
+                <label for="{{ annotation_model_form.annotation_timestamp.id_for_label }}">Timestamp:</label>
+                <input type="hidden" name="annotation_timestamp" id="id_annotation_timestamp">
+            </div>
+            <input type='submit' value='Add Annotation' onclick="timestamp()"/>
         </form>
         {% endif %}
         </div>
+
+
+            
+
 
         <div>
             {% if video_model_form %}
