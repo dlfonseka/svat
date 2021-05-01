@@ -46,10 +46,11 @@ def add_annotation(request):
 def add_video(request):
     if request.method == 'POST':
         vForm = VideoForm(request.POST, request.FILES)
-        print('Video FORM \n', vForm)
         if vForm.is_valid():
             vForm.save()
             return redirect('annotation:index')
+            #context = {'video': Video.objects.last()}
+            #return render(request, 'annotation/index.html', context)
         else:
             video_errors = vForm.errors
             video_model_form = VideoForm()
