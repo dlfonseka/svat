@@ -10,41 +10,35 @@
 
     <body>
 
-
-        <video
-            id="my-video"
-            class="video-js"
-            controls
-            preload="auto"
-            autoplay
-            width="640"
-            height="264"
-            data-setup="{}"
-        >
-            <source src='{{MEDIA_URL}}{{most_recent_video}}' type="video/mp4" />
-            <!-- <source src="MY_VIDEO.webm" type="video/webm" /> -->
-            <p class="vjs-no-js">
-            To view this video please enable JavaScript, and consider upgrading to a
-            web browser that
-            <a href="https://videojs.com/html5-video-support/" target="_blank"
-                >supports HTML5 video</a
+        {% if available_video %}
+            <video
+                id="my-video"
+                class="video-js"
+                controls
+                preload="auto"
+                autoplay
+                width="640"
+                height="264"
+                data-setup="{}"
             >
-            </p>
-        </video>
-        <script src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
-        <script>
-            var myPlayer = videojs('my-video');
-            myPlayer.currentTime(parseFloat("{{timestamp}}"));
-        </script>
-<!-- 
-        <script>
-
-            // set
-            //myPlayer.currentTime(10); // 2 minutes into the video
+                <source src='{{MEDIA_URL}}{{available_video}}' type="video/mp4" />
+                <!-- <source src="MY_VIDEO.webm" type="video/webm" /> -->
+                <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a
+                web browser that
+                <a href="https://videojs.com/html5-video-support/" target="_blank"
+                    >supports HTML5 video</a
+                >
+                </p>
+            </video>
+            <script src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
+            <script>
+                var myPlayer = videojs('my-video');
+                myPlayer.currentTime(parseFloat("{{timestamp}}"));
+            </script>
+        {% endif %}
             
-            //var whereYouAt2 = myPlayer.currentTime();
-            //console.log(whereYouAt2)
-        </script> -->
+
         <div>
             {% if annotation_list %}
             <ul>
@@ -76,7 +70,11 @@
         <form action="{% url 'annotation:add_annotation' %}", method="post">
             {% csrf_token %}
             {{annotation_model_form.non_field_errors}}
-
+            <div class="fieldWrapper">
+                {{ annotation_model_form.annotation_video.errors }}
+                {{available_video}}
+                <input type="hidden" name="annotation_video" id="id_annotation_video" value={{available_video}}>
+            </div>
             <div class="fieldWrapper">
                 {{ annotation_model_form.annotation_text.errors }}
                 <label for="{{ annotation_model_form.annotation_text.id_for_label }}">Annotation text:</label>
@@ -89,7 +87,7 @@
             </div>
             <div class="fieldWrapper">
                 {{ annotation_model_form.annotation_timestamp.errors }}
-                <label for="{{ annotation_model_form.annotation_timestamp.id_for_label }}">Timestamp:</label>
+                <!-- <label for="{{ annotation_model_form.annotation_timestamp.id_for_label }}"></label> -->
                 <input type="hidden" name="annotation_timestamp" id="id_annotation_timestamp">
             </div>
             <input type='submit' value='Add Annotation' onclick="timestamp()"/>

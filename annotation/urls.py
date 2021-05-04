@@ -6,6 +6,7 @@ from . import views
 app_name = 'annotation'
 urlpatterns = [
     path('', views.index, name='index'),
+    path('error', views.error, name='error'),
     path('add_annotation', views.add_annotation, name='add_annotation'),
     path('add_video', views.add_video, name='add_video'),
     
