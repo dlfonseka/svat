@@ -34,7 +34,7 @@
             <script src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
             <script>
                 var myPlayer = videojs('my-video');
-                myPlayer.currentTime(parseFloat("{{timestamp}}"));
+                myPlayer.currentTime(parseFloat("{{available_video.video_timestamp}}"));
             </script>
         {% endif %}
             
@@ -43,7 +43,7 @@
             {% if annotation_list %}
             <ul>
                 {% for annotation in annotation_list %}
-                <!-- <li>{{error}} {{annotation.annotation_text}}</li> -->
+                <li>{{error}} {{annotation.annotation_text}} {{annotation.annotation_timestamp}}</li>
                 {% endfor %}
             </ul>
             {% else %}
@@ -73,7 +73,8 @@
             <div class="fieldWrapper">
                 {{ annotation_model_form.annotation_video.errors }}
                 {{available_video}}
-                <input type="hidden" name="annotation_video" id="id_annotation_video" value={{available_video}}>
+                <input type="hidden" name="annotation_video" id="id_annotation_video" value="1">
+                <!-- {{ annotation_model_form.annotation_video }} -->
             </div>
             <div class="fieldWrapper">
                 {{ annotation_model_form.annotation_text.errors }}
@@ -90,7 +91,12 @@
                 <!-- <label for="{{ annotation_model_form.annotation_timestamp.id_for_label }}"></label> -->
                 <input type="hidden" name="annotation_timestamp" id="id_annotation_timestamp">
             </div>
+            <!-- <script type="text/javascript">
+                console.log("{{available_video}}")
+                document.getElementById('id_annotation_video').value = "{{available_video}}";
+            </script> -->
             <input type='submit' value='Add Annotation' onclick="timestamp()"/>
+            
         </form>
         {% endif %}
         </div>

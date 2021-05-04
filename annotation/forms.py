@@ -23,7 +23,6 @@ class VideoForm(forms.ModelForm):
             raise ValidationError('Video exists in database. Select video from dropdown or change filename and reupload.')
         return vid
 
-
 class ToolsForm(forms.ModelForm):
     class Meta:
         model = Tools

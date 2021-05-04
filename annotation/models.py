@@ -7,6 +7,7 @@ import os
 
 class Video(models.Model):
     video = models.FileField() #validators=[FileExtensionValidator(allowed_extensions=['mp4, mov'])]
+    video_timestamp = models.FloatField(null=True)
     #video_name = models.CharField(max_length=200, blank=False, null=True)
     #  video_upload_timestamp = models.DateTimeField(null=True)
 

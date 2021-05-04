@@ -9,8 +9,6 @@ from .forms import AnnotationForm, VideoForm, ToolsForm
 from django.conf import settings
 import os
 
-GLOBAL_TIMESTAMP = 0 #I am so sorry to every programming teacher I've ever had
-
 def index(request):   
     annotation_model_form = AnnotationForm()
     video_model_form = VideoForm()
@@ -28,24 +26,21 @@ def index(request):
             'video_model_form': video_model_form,
             'video_list': video_list,
             'available_video': available_video,
-            'timestamp': GLOBAL_TIMESTAMP
         }
     else:
         context = {
             'annotation_list': annotation_list,
             'annotation_model_form': annotation_model_form,
             'video_model_form': video_model_form,
-            'timestamp': GLOBAL_TIMESTAMP
         }
     return render(request, 'annotation/index.html', context)
 
 def add_annotation(request):
     if request.method == 'POST':
         aForm = AnnotationForm(request.POST) 
-        print(aForm)
         if aForm.is_valid():
-            global GLOBAL_TIMESTAMP
-            GLOBAL_TIMESTAMP = aForm.cleaned_data['annotation_timestamp']
+            aForm.cleaned_data['annotation_video'].video_timestamp = aForm.cleaned_data['annotation_timestamp']
+            aForm.cleaned_data['annotation_video'].save()
             aForm.save()
             return redirect('annotation:index')
         else:
@@ -58,6 +53,9 @@ def add_video(request):
     if request.method == 'POST':
         vForm = VideoForm(request.POST, request.FILES)
         if vForm.is_valid():
+            #NOTE: review this delete process
+            for f in os.listdir(settings.MEDIA_ROOT):
+                os.remove(os.path.join(settings.MEDIA_ROOT, f))
             vForm.save()
             return redirect('annotation:index')
         else:
