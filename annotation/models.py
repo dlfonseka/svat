@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import timezone
 from django.core.validators import FileExtensionValidator
-from .validators import file_size, video_exists
 from datetime import datetime
 from django.conf import settings
 import os
