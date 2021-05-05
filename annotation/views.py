@@ -9,8 +9,10 @@ from .forms import AnnotationForm, VideoForm, ToolsForm
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.contrib.auth.decorators import login_required
 import os
 
+@login_required
 def index(request):   
     annotation_model_form = AnnotationForm()
     video_model_form = VideoForm()
@@ -44,6 +46,7 @@ def index(request):
         }
     return render(request, 'annotation/index.html', context)
 
+@login_required
 def add_annotation(request):
     if request.method == 'POST':
         aForm = AnnotationForm(request.POST) 
@@ -58,6 +61,7 @@ def add_annotation(request):
             context = {'annotation_errors': annotation_errors, 'annotation_model_form': annotation_model_form}
             return render(request, 'annotation/index.html', context)
 
+@login_required
 def add_video(request):
     if request.method == 'POST':
         vForm = VideoForm(request.POST, request.FILES)
@@ -77,6 +81,7 @@ def add_video(request):
             context = {'video_errors': video_errors, 'video_model_form': video_model_form}
             return render(request, 'annotation/error.html', context)
 
+@login_required
 def add_tools(request):
     if request.method == 'POST':
         tForm = ToolsForm(request.POST, request.FILES)
@@ -91,7 +96,7 @@ def add_tools(request):
             tools_model_form = ToolsForm()
             context = {'tools_errors': tools_errors, 'tools_model_form': tools_model_form}
             return render(request, 'annotation/error.html', context)
-
+@login_required
 def error(request):
     context = {}
     return render(request, 'annotation/error.html')

@@ -134,5 +134,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #Registration
 
-LOGIN_REDIRECT_URL = 'annotation:index'
+LOGIN_REDIRECT_URL = 'home' #'annotation:index'
 LOGOUT_REDIRECT_URL = 'home'

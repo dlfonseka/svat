@@ -4,8 +4,14 @@
 <body>
     <h2>HOMEPAGE</h2>
 
-    {% if user.is_authenticated %}
+    {% if user.is_superuser %}
         Hi {{user.username}}!
+        <a href="{% url 'annotation:index' %}">Annotation Page</a>
+        <a href="/admin">Admin Page</a>
+        <a href="{% url 'logout' %}">Log Out</a>
+    {% elif user.is_authenticated %}
+        Hi {{user.username}}!
+        <a href="{% url 'annotation:index' %}">Annotation Page</a>
         <a href="{% url 'annotation:index' %}">Annotation Page</a>
         <a href="{% url 'logout' %}">Log Out</a>
     {% else %}
