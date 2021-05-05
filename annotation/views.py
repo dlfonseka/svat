@@ -15,24 +15,32 @@ def index(request):
     annotation_model_form = AnnotationForm()
     video_model_form = VideoForm()
     video_list = Video.objects.all()
+    tools_model_form = ToolsForm()
     try:
-        available_video = Video.objects.get(video=os.listdir(settings.MEDIA_ROOT)[0])
+        available_video = Video.objects.get(video=[f for f in os.listdir(settings.MEDIA_ROOT) if f != 'tools'][0])
         annotation_list = Annotation.objects.filter(annotation_video=available_video)
     except (Video.DoesNotExist, IndexError, Video.MultipleObjectsReturned) as e:
         available_video = None
+    try:
+        tools = [t.get_tools() for t in Tools.objects.filter(tools_video=available_video)][0] #TODO: is it actually 0? getting most recent?
+    except:
+        tools = None
 
     if available_video:
         context = {
             'annotation_list': annotation_list,
             'annotation_model_form': annotation_model_form,
             'video_model_form': video_model_form,
+            'tools_model_form': tools_model_form,
             'video_list': video_list,
+            'tools': tools,
             'available_video': available_video,
         }
     else:
         context = {
             'annotation_model_form': annotation_model_form,
             'video_model_form': video_model_form,
+            'tools_model_form': tools_model_form,
         }
     return render(request, 'annotation/index.html', context)
 
@@ -55,7 +63,7 @@ def add_video(request):
         vForm = VideoForm(request.POST, request.FILES)
         if vForm.is_valid():
             #NOTE: review this delete process
-            for f in os.listdir(settings.MEDIA_ROOT):
+            for f in [f for f in os.listdir(settings.MEDIA_ROOT) if f != 'tools']:
                 os.remove(os.path.join(settings.MEDIA_ROOT, f))
             if vForm.cleaned_data['video'].name in [ff.video.name for ff in Video.objects.all()]:
                 path = default_storage.save(os.path.join(settings.MEDIA_ROOT, vForm.cleaned_data['video'].name), 

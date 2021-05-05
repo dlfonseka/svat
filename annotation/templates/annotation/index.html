@@ -43,7 +43,7 @@
             {% if annotation_list %}
             <ul>
                 {% for annotation in annotation_list %}
-                <li>{{error}} {{annotation.annotation_text}} {{annotation.annotation_timestamp}}</li>
+                <li>{{error}}  {{annotation.annotation_tool}} {{annotation.annotation_text}} {{annotation.annotation_detail}} {{annotation.annotation_timestamp}}</li>
                 {% endfor %}
             </ul>
             {% else %}
@@ -63,6 +63,18 @@
             {% endif %}
         </div>
 
+        <!-- <div>
+            {% if tools %}
+            <ul>
+                {% for tool in tools %}
+                <li>{{tool}}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p>No tools uploaded. </p>
+            {% endif %}
+        </div> -->
+
         <div>
         {% if annotation_model_form %}
         {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
@@ -74,7 +86,6 @@
                 {{ annotation_model_form.annotation_video.errors }}
                 {{available_video}}
                 <input type="hidden" name="annotation_video" id="id_annotation_video" value="1">
-                <!-- {{ annotation_model_form.annotation_video }} -->
             </div>
             <div class="fieldWrapper">
                 {{ annotation_model_form.annotation_text.errors }}
@@ -88,13 +99,18 @@
             </div>
             <div class="fieldWrapper">
                 {{ annotation_model_form.annotation_timestamp.errors }}
-                <!-- <label for="{{ annotation_model_form.annotation_timestamp.id_for_label }}"></label> -->
                 <input type="hidden" name="annotation_timestamp" id="id_annotation_timestamp">
             </div>
-            <!-- <script type="text/javascript">
-                console.log("{{available_video}}")
-                document.getElementById('id_annotation_video').value = "{{available_video}}";
-            </script> -->
+            <div class="fieldWrapper">
+                {{ annotation_model_form.annotation_tool.errors }}
+                <label for="{{ annotation_model_form.annotation_tool.id_for_label }}">Annotation tool:</label>
+                <select name="annotation_tool" id="id_annotation_tool">
+                    <option value="" selected disabled>Select Tool</option>
+                    {% for tool in tools %}
+                        <option value="{{tool}}">{{tool}}</option>
+                    {% endfor %}
+                </select>
+            </div>
             <input type='submit' value='Add Annotation' onclick="timestamp()"/>
             
         </form>
@@ -119,11 +135,32 @@
                     {{ video_model_form.video_timestamp.errors }}
                     <input type="hidden" name="video_timestamp" id="id_video_timestamp" value=0>
                 </div>
-                <!-- {{video_model_form.as_p}} -->
                 <input type='submit' value='Add Video'/>
             </form>
             {% endif %}
             </div>
+
+
+            <div>
+                {% if tools_model_form %}
+                {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
+                {% if tools_errors %}{{tools_errors}} {% endif %}
+                <form action="{% url 'annotation:add_tools' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{tools_model_form.non_field_errors}}
+                    <div class="fieldWrapper">
+                        {{ tools_model_form.tools_file.errors }}
+                        <label for="{{ video_model_form.tools_file.id_for_label }}">Tools CSV File:</label>
+                        {{ tools_model_form.tools_file }}
+                    </div>
+                    <div class="fieldWrapper">
+                        {{ tools_model_form.tools_video.errors }}
+                        <input type="hidden" name="tools_video" id="id_tools_video" value="1">
+                    </div>
+                    <input type='submit' value='Add Tools File'/>
+                </form>
+                {% endif %}
+                </div>
 
 
     </body>

@@ -9,5 +9,6 @@ urlpatterns = [
     path('error', views.error, name='error'),
     path('add_annotation', views.add_annotation, name='add_annotation'),
     path('add_video', views.add_video, name='add_video'),
+    path('add_tools', views.add_tools, name='add_tools'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
