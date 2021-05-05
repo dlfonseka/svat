@@ -103,8 +103,6 @@
 
 
             
-
-
         <div>
             {% if video_model_form %}
             {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
@@ -112,7 +110,16 @@
             <form action="{% url 'annotation:add_video' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{video_model_form.non_field_errors}}
-                {{video_model_form.as_p}}
+                <div class="fieldWrapper">
+                    {{ video_model_form.video.errors }}
+                    <label for="{{ video_model_form.video.id_for_label }}">Video:</label>
+                    {{ video_model_form.video }}
+                </div>
+                <div class="fieldWrapper">
+                    {{ video_model_form.video_timestamp.errors }}
+                    <input type="hidden" name="video_timestamp" id="id_video_timestamp" value=0>
+                </div>
+                <!-- {{video_model_form.as_p}} -->
                 <input type='submit' value='Add Video'/>
             </form>
             {% endif %}

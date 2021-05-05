@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.core.validators import FileExtensionValidator
+from .validators import file_size, video_exists
 from datetime import datetime
 from django.conf import settings
 import os
@@ -8,8 +9,6 @@ import os
 class Video(models.Model):
     video = models.FileField() #validators=[FileExtensionValidator(allowed_extensions=['mp4, mov'])]
     video_timestamp = models.FloatField(null=True)
-    #video_name = models.CharField(max_length=200, blank=False, null=True)
-    #  video_upload_timestamp = models.DateTimeField(null=True)
 
     def __str__(self):
         return self.video.name
@@ -29,5 +28,3 @@ class Annotation(models.Model):
     def __str__(self):
         return self.annotation_text
 
-# def upload_to(instance, filename):
-#     return os.path.join(filename)

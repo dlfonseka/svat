@@ -7,16 +7,18 @@ from datetime import datetime
 from .models import Annotation, Tools, Video
 from .forms import AnnotationForm, VideoForm, ToolsForm
 from django.conf import settings
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 import os
 
 def index(request):   
     annotation_model_form = AnnotationForm()
     video_model_form = VideoForm()
-    annotation_list = Annotation.objects.all()
     video_list = Video.objects.all()
     try:
         available_video = Video.objects.get(video=os.listdir(settings.MEDIA_ROOT)[0])
-    except (Video.DoesNotExist, IndexError) as e:
+        annotation_list = Annotation.objects.filter(annotation_video=available_video)
+    except (Video.DoesNotExist, IndexError, Video.MultipleObjectsReturned) as e:
         available_video = None
 
     if available_video:
@@ -29,7 +31,6 @@ def index(request):
         }
     else:
         context = {
-            'annotation_list': annotation_list,
             'annotation_model_form': annotation_model_form,
             'video_model_form': video_model_form,
         }
@@ -56,6 +57,10 @@ def add_video(request):
             #NOTE: review this delete process
             for f in os.listdir(settings.MEDIA_ROOT):
                 os.remove(os.path.join(settings.MEDIA_ROOT, f))
+            if vForm.cleaned_data['video'].name in [ff.video.name for ff in Video.objects.all()]:
+                path = default_storage.save(os.path.join(settings.MEDIA_ROOT, vForm.cleaned_data['video'].name), 
+                                            ContentFile(vForm.cleaned_data['video'].read()))
+                return redirect('annotation:index')
             vForm.save()
             return redirect('annotation:index')
         else:
