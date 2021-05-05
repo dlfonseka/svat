@@ -9,115 +9,35 @@
     </head>
 
     <body>
-
         {% if available_video %}
-            <video
-                id="my-video"
-                class="video-js"
-                controls
-                preload="auto"
-                autoplay
-                width="640"
-                height="264"
-                data-setup="{}"
-            >
-                <source src='{{MEDIA_URL}}{{available_video}}' type="video/mp4" />
-                <!-- <source src="MY_VIDEO.webm" type="video/webm" /> -->
-                <p class="vjs-no-js">
-                To view this video please enable JavaScript, and consider upgrading to a
-                web browser that
-                <a href="https://videojs.com/html5-video-support/" target="_blank"
-                    >supports HTML5 video</a
+            <div>
+                <video
+                    id="my-video"
+                    class="video-js"
+                    controls
+                    preload="auto"
+                    autoplay
+                    width="640"
+                    height="264"
+                    data-setup="{}"
                 >
-                </p>
-            </video>
-            <script src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
-            <script>
-                var myPlayer = videojs('my-video');
-                myPlayer.currentTime(parseFloat("{{available_video.video_timestamp}}"));
-            </script>
+                    <source src='{{MEDIA_URL}}{{available_video}}' type="video/mp4" />
+                    <!-- <source src="MY_VIDEO.webm" type="video/webm" /> -->
+                    <p class="vjs-no-js">
+                    To view this video please enable JavaScript, and consider upgrading to a
+                    web browser that
+                    <a href="https://videojs.com/html5-video-support/" target="_blank"
+                        >supports HTML5 video</a
+                    >
+                    </p>
+                </video>
+                <script src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
+                <script>
+                    var myPlayer = videojs('my-video');
+                    myPlayer.currentTime(parseFloat("{{available_video.video_timestamp}}"));
+                </script>
+            </div>
         {% endif %}
-            
-
-        <div>
-            {% if annotation_list %}
-            <ul>
-                {% for annotation in annotation_list %}
-                <li>{{error}}  {{annotation.annotation_tool}} {{annotation.annotation_text}} {{annotation.annotation_detail}} {{annotation.annotation_timestamp}}</li>
-                {% endfor %}
-            </ul>
-            {% else %}
-                <p>No annotations recorded. </p>
-            {% endif %}
-        </div>
-
-        <div>
-            {% if video_list %}
-            <ul>
-                {% for video in video_list %}
-                <!-- <li>{{video}}</li> -->
-                {% endfor %}
-            </ul>
-            {% else %}
-                <p>No videos uploaded. </p>
-            {% endif %}
-        </div>
-
-        <!-- <div>
-            {% if tools %}
-            <ul>
-                {% for tool in tools %}
-                <li>{{tool}}</li>
-                {% endfor %}
-            </ul>
-            {% else %}
-                <p>No tools uploaded. </p>
-            {% endif %}
-        </div> -->
-
-        <div>
-        {% if annotation_model_form %}
-        {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
-        {% if annotation_errors %}{{annotation_errors}} {% endif %}
-        <form action="{% url 'annotation:add_annotation' %}", method="post">
-            {% csrf_token %}
-            {{annotation_model_form.non_field_errors}}
-            <div class="fieldWrapper">
-                {{ annotation_model_form.annotation_video.errors }}
-                {{available_video}}
-                <input type="hidden" name="annotation_video" id="id_annotation_video" value="1">
-            </div>
-            <div class="fieldWrapper">
-                {{ annotation_model_form.annotation_text.errors }}
-                <label for="{{ annotation_model_form.annotation_text.id_for_label }}">Annotation text:</label>
-                {{ annotation_model_form.annotation_text }}
-            </div>
-            <div class="fieldWrapper">
-                {{ annotation_model_form.annotation_detail.errors }}
-                <label for="{{ annotation_model_form.annotation_detail.id_for_label }}">Annotation detail:</label>
-                {{ annotation_model_form.annotation_detail }}
-            </div>
-            <div class="fieldWrapper">
-                {{ annotation_model_form.annotation_timestamp.errors }}
-                <input type="hidden" name="annotation_timestamp" id="id_annotation_timestamp">
-            </div>
-            <div class="fieldWrapper">
-                {{ annotation_model_form.annotation_tool.errors }}
-                <label for="{{ annotation_model_form.annotation_tool.id_for_label }}">Annotation tool:</label>
-                <select name="annotation_tool" id="id_annotation_tool">
-                    <option value="" selected disabled>Select Tool</option>
-                    {% for tool in tools %}
-                        <option value="{{tool}}">{{tool}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <input type='submit' value='Add Annotation' onclick="timestamp()"/>
-            
-        </form>
-        {% endif %}
-        </div>
-
-
             
         <div>
             {% if video_model_form %}
@@ -138,9 +58,9 @@
                 <input type='submit' value='Add Video'/>
             </form>
             {% endif %}
-            </div>
+        </div>
 
-
+        {% if available_video %}
             <div>
                 {% if tools_model_form %}
                 {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
@@ -160,7 +80,63 @@
                     <input type='submit' value='Add Tools File'/>
                 </form>
                 {% endif %}
-                </div>
+            </div>
+
+            <div>
+                {% if annotation_model_form %}
+                {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
+                {% if annotation_errors %}{{annotation_errors}} {% endif %}
+                <form action="{% url 'annotation:add_annotation' %}", method="post">
+                    {% csrf_token %}
+                    {{annotation_model_form.non_field_errors}}
+                    <div class="fieldWrapper">
+                        {{ annotation_model_form.annotation_video.errors }}
+                        <input type="hidden" name="annotation_video" id="id_annotation_video" value="1">
+                    </div>
+                    <div class="fieldWrapper">
+                        {{ annotation_model_form.annotation_text.errors }}
+                        <label for="{{ annotation_model_form.annotation_text.id_for_label }}">Annotation text:</label>
+                        {{ annotation_model_form.annotation_text }}
+                    </div>
+                    <div class="fieldWrapper">
+                        {{ annotation_model_form.annotation_detail.errors }}
+                        <label for="{{ annotation_model_form.annotation_detail.id_for_label }}">Annotation detail:</label>
+                        {{ annotation_model_form.annotation_detail }}
+                    </div>
+                    <div class="fieldWrapper">
+                        {{ annotation_model_form.annotation_timestamp.errors }}
+                        <input type="hidden" name="annotation_timestamp" id="id_annotation_timestamp">
+                    </div>
+                    <div class="fieldWrapper">
+                        {{ annotation_model_form.annotation_tool.errors }}
+                        <label for="{{ annotation_model_form.annotation_tool.id_for_label }}">Annotation tool:</label>
+                        <select name="annotation_tool" id="id_annotation_tool">
+                            <option value="" selected disabled>Select Tool</option>
+                            {% for tool in tools %}
+                                <option value="{{tool}}">{{tool}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <input type='submit' value='Add Annotation' onclick="timestamp()"/>
+                    
+                </form>
+                {% endif %}
+            </div>
+
+            <div>
+                {% if annotation_list %}
+                <h3> List of Annotations </h3> 
+                <ul>
+                    {% for annotation in annotation_list %}
+                    <li>{{error}}  {{annotation.annotation_tool}} {{annotation.annotation_text}} {{annotation.annotation_detail}} {{annotation.annotation_timestamp}}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <p>No annotations recorded. </p>
+                {% endif %}
+            </div>
+
+        {% endif %}
 
 
     </body>
