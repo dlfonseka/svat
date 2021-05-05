@@ -81,6 +81,9 @@ def add_tools(request):
     if request.method == 'POST':
         tForm = ToolsForm(request.POST, request.FILES)
         if tForm.is_valid():
+            toolspath = os.path.join(settings.MEDIA_ROOT, 'tools')
+            for f in os.listdir(toolspath):
+                os.remove(os.path.join(toolspath, f))
             tForm.save()
             return redirect('annotation:index')
         else:
