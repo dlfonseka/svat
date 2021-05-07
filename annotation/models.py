@@ -15,10 +15,15 @@ class Video(models.Model):
     def __str__(self):
         return self.video.name
 
+    def set_timestamp(self, time):
+        self.video_timestamp = time
+        self.save()
+
 class Tools(models.Model):
     tools = models.CharField(max_length=1000, null=True, blank=True) #TODO: is this right
     tools_video = models.ForeignKey('Video', on_delete=models.CASCADE, null=True, blank=True) #TODO: review this to see if correct delete method
     tools_file = models.FileField(upload_to='tools', null=True)
+    tools_video_indicator = models.CharField(max_length=200, null=True, blank=True)
 
     def set_tools(self, t):
         self.tools = json.dumps(t)
@@ -30,16 +35,24 @@ class Tools(models.Model):
         read_tools_file = self.tools_file.read().decode('utf-8')
         tools = read_tools_file.rstrip('\n') .split(',')
         self.set_tools(tools)
+        self.tools_video = Video.objects.filter(video=self.tools_video_indicator)[0]
         super(Tools, self).save(*args, **kwargs) #Call the "real" save() method.
 
 class Annotation(models.Model):
     annotation_video = models.ForeignKey('Video', on_delete=models.CASCADE, null=True, blank=True) #TODO: discuss delete method
     annotation_tool = models.CharField(max_length=200, blank=True) #TODO: is this behavior correct? if toolset deleted, then just replace toolset with null?   
     annotation_text = models.CharField(max_length=200, blank=True)
-    annotation_detail = models.CharField(max_length=400, blank=True)
     #annotation_start_time = models.DateTimeField(default = datetime.now()) #make mandatory
     #annotation_duration = models.DurationField(blank=True) #make optional
     annotation_timestamp = models.FloatField(null=True)
+    annotation_video_indicator = models.CharField(max_length=200, null=True, blank=True)
+
     def __str__(self):
         return self.annotation_text
 
+    def save(self, *args, **kwargs):
+        self.annotation_video = Video.objects.filter(video=self.annotation_video_indicator)[0]
+        #Video.objects.filter(video=self.annotation_video_indicator)[0].set_timestamp(self.annotation_timestamp)
+        #Video.objects.filter(video=self.annotation_video)[0].video_timestamp = 10
+        #print('wassatimestamp', Video.objects.filter(video=self.annotation_video_indicator)[0].video_timestamp)
+        super(Annotation, self).save(*args, **kwargs) #Call the "real" save() method.

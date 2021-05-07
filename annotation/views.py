@@ -27,6 +27,12 @@ def index(request):
         tools = [t.get_tools() for t in Tools.objects.filter(tools_video=available_video)][0] #TODO: is it actually 0? getting most recent?
     except:
         tools = None
+    try:
+        if not Video.objects.all().exists():
+            for f in [f for f in os.listdir(settings.MEDIA_ROOT) if f != 'tools']:
+                os.remove(os.path.join(settings.MEDIA_ROOT, f))
+    except:
+        pass
 
     if available_video:
         context = {
@@ -51,8 +57,8 @@ def add_annotation(request):
     if request.method == 'POST':
         aForm = AnnotationForm(request.POST) 
         if aForm.is_valid():
-            aForm.cleaned_data['annotation_video'].video_timestamp = aForm.cleaned_data['annotation_timestamp']
-            aForm.cleaned_data['annotation_video'].save()
+            indicator = aForm.cleaned_data['annotation_video_indicator']
+            Video.objects.filter(video=indicator)[0].set_timestamp(aForm.cleaned_data['annotation_timestamp'])
             aForm.save()
             return redirect('annotation:index')
         else:
@@ -96,6 +102,7 @@ def add_tools(request):
             tools_model_form = ToolsForm()
             context = {'tools_errors': tools_errors, 'tools_model_form': tools_model_form}
             return render(request, 'annotation/error.html', context)
+
 @login_required
 def error(request):
     context = {}

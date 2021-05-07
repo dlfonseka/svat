@@ -3,7 +3,6 @@
 
 <html>
     <head>
-        <script src="{% static 'js/videoplayer.js' %}"></script>
         <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
         <script src="{% static 'js/annotation.js' %}"></script>
     </head>
@@ -17,12 +16,13 @@
                     controls
                     preload="auto"
                     autoplay
+                    muted
                     width="640"
                     height="264"
                     data-setup="{}"
                 >
                     <source src='{{MEDIA_URL}}{{available_video}}' type="video/mp4" />
-                    <!-- <source src="MY_VIDEO.webm" type="video/webm" /> -->
+                    <source src='{{MEDIA_URL}}{{available_video}}' type="video/webm" />
                     <p class="vjs-no-js">
                     To view this video please enable JavaScript, and consider upgrading to a
                     web browser that
@@ -74,6 +74,12 @@
                         {{ tools_model_form.tools_file }}
                     </div>
                     <div class="fieldWrapper">
+                        {{ tools_model_form.tools_video_indicator.errors }}
+                        <!-- <label for="{{ video_model_form.tools_video_indicator.id_for_label }}">Tools Video Indicator:</label> -->
+                        <!-- {{ tools_model_form.tools_video_indicator }} -->
+                        <input type="hidden" name="tools_video_indicator" id="id_tools_video_indicator" value="{{available_video}}">
+                    </div>
+                    <div class="fieldWrapper">
                         {{ tools_model_form.tools_video.errors }}
                         <input type="hidden" name="tools_video" id="id_tools_video" value="1">
                     </div>
@@ -81,7 +87,6 @@
                 </form>
                 {% endif %}
             </div>
-
             <div>
                 {% if annotation_model_form %}
                 {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
@@ -90,18 +95,13 @@
                     {% csrf_token %}
                     {{annotation_model_form.non_field_errors}}
                     <div class="fieldWrapper">
-                        {{ annotation_model_form.annotation_video.errors }}
-                        <input type="hidden" name="annotation_video" id="id_annotation_video" value="1">
+                        {{ annotation_model_form.annotation_video_indicator.errors }}
+                        <input type="hidden" name="annotation_video_indicator" id="id_annotation_video_indicator" value="{{available_video}}">
                     </div>
                     <div class="fieldWrapper">
                         {{ annotation_model_form.annotation_text.errors }}
                         <label for="{{ annotation_model_form.annotation_text.id_for_label }}">Annotation text:</label>
                         {{ annotation_model_form.annotation_text }}
-                    </div>
-                    <div class="fieldWrapper">
-                        {{ annotation_model_form.annotation_detail.errors }}
-                        <label for="{{ annotation_model_form.annotation_detail.id_for_label }}">Annotation detail:</label>
-                        {{ annotation_model_form.annotation_detail }}
                     </div>
                     <div class="fieldWrapper">
                         {{ annotation_model_form.annotation_timestamp.errors }}

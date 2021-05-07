@@ -12,7 +12,6 @@
     {% elif user.is_authenticated %}
         Hi {{user.username}}!
         <a href="{% url 'annotation:index' %}">Annotation Page</a>
-        <a href="{% url 'annotation:index' %}">Annotation Page</a>
         <a href="{% url 'logout' %}">Log Out</a>
     {% else %}
         <p>You are not logged in.</p>
