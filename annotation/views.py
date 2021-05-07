@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
+import csv
 import os
 
 @login_required
@@ -102,6 +103,21 @@ def add_tools(request):
             tools_model_form = ToolsForm()
             context = {'tools_errors': tools_errors, 'tools_model_form': tools_model_form}
             return render(request, 'annotation/error.html', context)
+
+@login_required
+def output_csv(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': 'attachment; filename="somefilename.csv"'},
+    )
+
+    writer = csv.writer(response)
+    writer.writerow(['First row', 'Foo', 'Bar', 'Baz'])
+    writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
+
+    return response
+
 
 @login_required
 def error(request):
