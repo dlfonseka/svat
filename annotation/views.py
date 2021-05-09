@@ -4,8 +4,8 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpRespons
 from django.template import loader
 from django.urls import reverse
 from datetime import datetime
-from .models import Annotation, Tools, Video
-from .forms import AnnotationForm, VideoForm, ToolsForm
+from .models import Tools, Video, PointAnnotation, SegmentAnnotation
+from .forms import PointAnnotationForm, SegmentAnnotationForm, VideoForm, ToolsForm
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
@@ -15,13 +15,16 @@ import os
 
 @login_required
 def index(request):   
-    annotation_model_form = AnnotationForm()
+    point_annotation_model_form = PointAnnotationForm()
+    segment_annotation_model_form = SegmentAnnotationForm()     
     video_model_form = VideoForm()
     video_list = Video.objects.all()
     tools_model_form = ToolsForm()
     try:
         available_video = Video.objects.get(video=[f for f in os.listdir(settings.MEDIA_ROOT) if f != 'tools'][0])
-        annotation_list = Annotation.objects.filter(annotation_video=available_video)
+        annotation_list = list(PointAnnotation.objects.filter(point_annotation_video=available_video)) + \
+                            list(SegmentAnnotation.objects.filter(segment_annotation_video=available_video)) #TODO: change this concatenation to merge
+        print(annotation_list)
     except (Video.DoesNotExist, IndexError, Video.MultipleObjectsReturned) as e:
         available_video = None
     try:
@@ -38,7 +41,8 @@ def index(request):
     if available_video:
         context = {
             'annotation_list': annotation_list,
-            'annotation_model_form': annotation_model_form,
+            'point_annotation_model_form': point_annotation_model_form,
+            'segment_annotation_model_form': segment_annotation_model_form,
             'video_model_form': video_model_form,
             'tools_model_form': tools_model_form,
             'video_list': video_list,
@@ -47,25 +51,42 @@ def index(request):
         }
     else:
         context = {
-            'annotation_model_form': annotation_model_form,
+            'point_annotation_model_form': point_annotation_model_form,
+            'segment_annotation_model_form': segment_annotation_model_form,
             'video_model_form': video_model_form,
             'tools_model_form': tools_model_form,
         }
     return render(request, 'annotation/index.html', context)
 
 @login_required
-def add_annotation(request):
+def add_point_annotation(request):
     if request.method == 'POST':
-        aForm = AnnotationForm(request.POST) 
+        aForm = PointAnnotationForm(request.POST) 
+        print(aForm)
         if aForm.is_valid():
-            indicator = aForm.cleaned_data['annotation_video_indicator']
-            Video.objects.filter(video=indicator)[0].set_timestamp(aForm.cleaned_data['annotation_timestamp'])
+            indicator = aForm.cleaned_data['point_annotation_video_indicator']
+            Video.objects.filter(video=indicator)[0].set_timestamp(aForm.cleaned_data['point_annotation_timestamp'])
             aForm.save()
             return redirect('annotation:index')
         else:
-            annotation_errors = aForm.errors
-            annotation_model_form = AnnotationForm()
-            context = {'annotation_errors': annotation_errors, 'annotation_model_form': annotation_model_form}
+            point_annotation_errors = aForm.errors
+            point_annotation_model_form = PointAnnotationForm()
+            context = {'point_annotation_errors': point_annotation_errors, 'point_annotation_model_form': point_annotation_model_form}
+            return render(request, 'annotation/index.html', context)
+
+@login_required
+def add_segment_annotation(request):
+    if request.method == 'POST':
+        aForm = SegmentAnnotationForm(request.POST) 
+        if aForm.is_valid():
+            indicator = aForm.cleaned_data['segment_annotation_video_indicator']
+            Video.objects.filter(video=indicator)[0].set_timestamp(aForm.cleaned_data['segment_annotation_endtime'])
+            aForm.save()
+            return redirect('annotation:index')
+        else:
+            segment_annotation_errors = aForm.errors
+            segment_annotation_model_form = SegmentAnnotationForm()
+            context = {'segment_annotation_errors': segment_annotation_errors, 'segment_annotation_model_form': segment_annotation_model_form}
             return render(request, 'annotation/index.html', context)
 
 @login_required

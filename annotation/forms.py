@@ -1,14 +1,19 @@
 from django import forms
-from .models import Video, Tools, Annotation
+from .models import Video, Tools, PointAnnotation, SegmentAnnotation
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils.text import get_valid_filename
 import os
 
-class AnnotationForm(forms.ModelForm):
+class PointAnnotationForm(forms.ModelForm):
     class Meta:
-        model = Annotation
-        exclude = ['annotation_video']
+        model = PointAnnotation
+        exclude = ['point_annotation_video']
+
+class SegmentAnnotationForm(forms.ModelForm):
+    class Meta:
+        model = SegmentAnnotation
+        exclude = ['segment_annotation_video']
 
 class VideoForm(forms.ModelForm):
     class Meta:

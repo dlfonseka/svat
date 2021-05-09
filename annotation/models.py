@@ -38,21 +38,31 @@ class Tools(models.Model):
         self.tools_video = Video.objects.filter(video=self.tools_video_indicator)[0]
         super(Tools, self).save(*args, **kwargs) #Call the "real" save() method.
 
-class Annotation(models.Model):
-    annotation_video = models.ForeignKey('Video', on_delete=models.CASCADE, null=True, blank=True) #TODO: discuss delete method
-    annotation_tool = models.CharField(max_length=200, blank=True) #TODO: is this behavior correct? if toolset deleted, then just replace toolset with null?   
-    annotation_text = models.CharField(max_length=200, blank=True)
-    #annotation_start_time = models.DateTimeField(default = datetime.now()) #make mandatory
-    #annotation_duration = models.DurationField(blank=True) #make optional
-    annotation_timestamp = models.FloatField(null=True)
-    annotation_video_indicator = models.CharField(max_length=200, null=True, blank=True)
+class PointAnnotation(models.Model):
+    point_annotation_video = models.ForeignKey('Video', on_delete=models.CASCADE, null=True, blank=True) #TODO: discuss delete method
+    point_annotation_tool = models.CharField(max_length=200, blank=True) #TODO: is this behavior correct? if toolset deleted, then just replace toolset with null?   
+    point_annotation_timestamp = models.FloatField(null=True)
+    point_annotation_video_indicator = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
-        return self.annotation_text
+        return self.point_annotation_tool
 
     def save(self, *args, **kwargs):
-        self.annotation_video = Video.objects.filter(video=self.annotation_video_indicator)[0]
-        #Video.objects.filter(video=self.annotation_video_indicator)[0].set_timestamp(self.annotation_timestamp)
-        #Video.objects.filter(video=self.annotation_video)[0].video_timestamp = 10
-        #print('wassatimestamp', Video.objects.filter(video=self.annotation_video_indicator)[0].video_timestamp)
-        super(Annotation, self).save(*args, **kwargs) #Call the "real" save() method.
+        self.point_annotation_video = Video.objects.filter(video=self.point_annotation_video_indicator)[0]
+        super(PointAnnotation, self).save(*args, **kwargs) #Call the "real" save() method.
+
+class SegmentAnnotation(models.Model):
+    segment_annotation_video = models.ForeignKey('Video', on_delete=models.CASCADE, null=True, blank=True) #TODO: discuss delete method
+    segment_annotation_text = models.CharField(max_length=200, blank=True)
+    segment_annotation_starttime = models.FloatField(null=True)
+    segment_annotation_endtime = models.FloatField(null=True)
+    segment_annotation_video_indicator = models.CharField(max_length=200, null=True, blank=True)
+
+    def __str__(self):
+        return self.segment_annotation_text
+
+    def save(self, *args, **kwargs):
+        self.segment_annotation_video = Video.objects.filter(video=self.segment_annotation_video_indicator)[0]
+        super(SegmentAnnotation, self).save(*args, **kwargs) #Call the "real" save() method.
+
+

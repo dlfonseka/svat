@@ -9,6 +9,7 @@
 
     <body>
         {% if available_video %}
+        <!-- VIDEO PLAYER -->
             <div>
                 <video
                     id="my-video"
@@ -38,7 +39,8 @@
                 </script>
             </div>
         {% endif %}
-            
+        
+        <!-- VIDEO UPLOAD MODEL FORM -->
         <div>
             {% if video_model_form %}
             {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
@@ -60,6 +62,7 @@
             {% endif %}
         </div>
 
+        <!-- TOOLS MODEL FORM -->
         {% if available_video %}
             <div>
                 {% if tools_model_form %}
@@ -87,52 +90,90 @@
                 </form>
                 {% endif %}
             </div>
+
+            <!-- ANNOTATION MODEL FORM -->
             <div>
-                {% if annotation_model_form %}
-                {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
-                {% if annotation_errors %}{{annotation_errors}} {% endif %}
-                <form action="{% url 'annotation:add_annotation' %}", method="post">
-                    {% csrf_token %}
-                    {{annotation_model_form.non_field_errors}}
-                    <div class="fieldWrapper">
-                        {{ annotation_model_form.annotation_video_indicator.errors }}
-                        <input type="hidden" name="annotation_video_indicator" id="id_annotation_video_indicator" value="{{available_video}}">
+                {% if point_annotation_model_form %}
+                    {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
+                    {% if point_annotation_errors %}{{point_annotation_errors}} {% endif %}
+                    {% if segment_annotation_errors %}{{segment_annotation_errors}} {% endif %}
+
+                    <div>
+                        <button id='timepoint_toggle' name='timepoint' onclick="showhide('timepoint'); playpause();">Time-Point Annotation</button>
+                        <button id='timesegment_toggle' name='timesegment' onclick="showhide('timesegment'); timestamp('id_segment_annotation_starttime')";>Time-Segment Annotation</button>
                     </div>
-                    <div class="fieldWrapper">
-                        {{ annotation_model_form.annotation_text.errors }}
-                        <label for="{{ annotation_model_form.annotation_text.id_for_label }}">Annotation text:</label>
-                        {{ annotation_model_form.annotation_text }}
+
+                    <!-- POINT -->
+                    <div id='timepoint' style='visibility:hidden;'>
+                        <form action="{% url 'annotation:add_point_annotation' %}", method="post">
+                            {% csrf_token %}
+                            {{point_annotation_model_form.non_field_errors}}
+                            <div class="fieldWrapper">
+                                {{ point_annotation_model_form.point_annotation_video_indicator.errors }}
+                                <input type="hidden" name="point_annotation_video_indicator" id="id_point_annotation_video_indicator" value="{{available_video}}">
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ point_annotation_model_form.point_annotation_timestamp.errors }}
+                                <input type="hidden" name="point_annotation_timestamp" id="id_point_annotation_timestamp">
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ point_annotation_model_form.point_annotation_tool.errors }}
+                                <label for="{{ point_annotation_model_form.point_annotation_tool.id_for_label }}">Annotation tool:</label>
+                                <select name="point_annotation_tool" id="id_point_annotation_tool">
+                                    <option value="" selected disabled>Select Tool</option>
+                                    {% for tool in tools %}
+                                        <option value="{{tool}}">{{tool}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <input type='submit' value='Save Annotation' onclick="timestamp('id_point_annotation_timestamp'); play();"/>
+                        </form>
                     </div>
-                    <div class="fieldWrapper">
-                        {{ annotation_model_form.annotation_timestamp.errors }}
-                        <input type="hidden" name="annotation_timestamp" id="id_annotation_timestamp">
+
+                    <!-- SEGMENT -->
+                    <div id='timesegment' style='visibility:hidden;'>
+                        <form action="{% url 'annotation:add_segment_annotation' %}", method="post">
+                            {% csrf_token %}
+                            {{segment_annotation_model_form.non_field_errors}}
+                            <div class="fieldWrapper">
+                                {{ segment_annotation_model_form.segment_annotation_video_indicator.errors }}
+                                <input type="hidden" name="segment_annotation_video_indicator" id="id_segment_annotation_video_indicator" value="{{available_video}}">
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ segment_annotation_model_form.segment_annotation_text.errors }}
+                                <label for="{{ segment_annotation_model_form.segment_annotation_text.id_for_label }}">Annotation text:</label>
+                                {{ segment_annotation_model_form.segment_annotation_text }}
+                            </div>
+
+                            <div class="fieldWrapper">
+                                {{ segment_annotation_model_form.segment_annotation_starttime.errors }}
+                                <input type="hidden" name="segment_annotation_starttime" id="id_segment_annotation_starttime">
+                            </div>
+                            <div class="fieldWrapper">
+                                {{ segment_annotation_model_form.segment_annotation_endtime.errors }}
+                                <input type="hidden" name="segment_annotation_endtime" id="id_segment_annotation_endtime">
+                            </div>
+                            <!-- <button id='start' onclick="timestamp('id_segment_annotation_starttime'); ;">Start Segment</button> -->
+                            <input type='submit' value='End and Save Segment Annotation' onclick="timestamp('id_segment_annotation_endtime')"/>
+                        </form>
                     </div>
-                    <div class="fieldWrapper">
-                        {{ annotation_model_form.annotation_tool.errors }}
-                        <label for="{{ annotation_model_form.annotation_tool.id_for_label }}">Annotation tool:</label>
-                        <select name="annotation_tool" id="id_annotation_tool">
-                            <option value="" selected disabled>Select Tool</option>
-                            {% for tool in tools %}
-                                <option value="{{tool}}">{{tool}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <input type='submit' value='Add Annotation' onclick="timestamp()"/>
-                    
-                </form>
+
+
+
+
                 {% endif %}
             </div>
-
+            <!-- ANNOTATION DISPLAY -->
             <div>
                 {% if annotation_list %}
-                <h3> List of Annotations </h3> 
-                <ul>
-                    {% for annotation in annotation_list %}
-                    <li>{{error}}  {{annotation.annotation_tool}} {{annotation.annotation_text}} {{annotation.annotation_detail}} {{annotation.annotation_timestamp}}</li>
-                    {% endfor %}
-                </ul>
-                {% else %}
-                    <p>No annotations recorded. </p>
+                    <h3> List of Annotations </h3> 
+                    <ul>
+                        {% for annotation in annotation_list %}
+                        <li>{{error}}  {{annotation.point_annotation_tool}} {{annotation.segment_annotation_text}} {{annotation.point_annotation_timestamp}} {{annotation.segment_annotation_starttime}} {% if annotation.segment_annotation_starttime %}{{"-"}} {% endif %} {{annotation.segment_annotation_endtime}}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                        <p>No annotations recorded. </p>
                 {% endif %}
             </div>
 
