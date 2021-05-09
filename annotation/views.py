@@ -24,11 +24,11 @@ def index(request):
         available_video = Video.objects.get(video=[f for f in os.listdir(settings.MEDIA_ROOT) if f != 'tools'][0])
         annotation_list = list(PointAnnotation.objects.filter(point_annotation_video=available_video)) + \
                             list(SegmentAnnotation.objects.filter(segment_annotation_video=available_video)) #TODO: change this concatenation to merge
-        print(annotation_list)
+        annotation_list.sort(key=lambda t: t.point_annotation_timestamp if 'point_annotation_timestamp' in str(t._meta.get_fields()) else t.segment_annotation_starttime)
     except (Video.DoesNotExist, IndexError, Video.MultipleObjectsReturned) as e:
         available_video = None
     try:
-        tools = [t.get_tools() for t in Tools.objects.filter(tools_video=available_video)][-1] #TODO: is it actually 0? getting most recent?
+        tools = [t.get_tools() for t in Tools.objects.filter(tools_video=available_video)][-1]
     except:
         tools = None
     try:
