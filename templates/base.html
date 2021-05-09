@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        {% block css %}
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+        {% endblock %}
+        <title>SVAT</title>
+    </head>
+
+    <body>
+
+        <header>
+            {% load static %}
+            <div>
+                <a href="{% url 'annotation:index' %}">Surgical Video Annotation Tool</a>
+            </div>
+
+            <div>
+                {% if user.is_superuser %}
+                    <a class='topbutton' href="{% url 'logout' %}">Log Out</a>
+                    <a class='topbutton' href="/admin">Admin Page</a>
+                    <a class='topbutton' href="{% url 'annotation:index' %}">Annotation Page</a>
+                {% elif user.is_authenticated %}
+                    <a class='topbutton' href="{% url 'logout' %}">Log Out</a>
+                    <a class='topbutton' href="{% url 'annotation:index' %}">Annotation Page</a>
+
+                <!-- {% else %}
+                    <p>You are not logged in.</p>
+                    <a href="{% url 'login' %}">Log In</a>
+                    <a href="{% url 'accounts:signup' %}">Sign Up</a> -->
+                {% endif %}
+            </div>
+        </header>
+        {% block content %}
+        {% endblock %}
+        <footer>
+
+        </footer>
+    </body>
+</html>

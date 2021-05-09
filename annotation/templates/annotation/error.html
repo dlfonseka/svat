@@ -1,10 +1,6 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
 
-<head>
-
-</head>
-
-<body>
     Error
     Go back to <a href="{% url 'annotation:index' %}">Annotation Page</a>
     {% if video_errors %}
@@ -18,4 +14,4 @@
     {% if tools_errors %}
         {{tools_errors}}
     {% endif %}
-</body>
+{% endblock %}

@@ -1,13 +1,10 @@
+{% extends "base.html" %}
+{% block css %}{{block.super}}
+{% endblock %}
+{% block content %}
 {% load static %}
-<!DOCTYPE html>
-
-<html>
-    <head>
         <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
         <script src="{% static 'js/annotation.js' %}"></script>
-    </head>
-
-    <body>
         {% if available_video %}
         <!-- VIDEO PLAYER -->
             <div>
@@ -178,7 +175,4 @@
             </div>
 
         {% endif %}
-
-
-    </body>
-</html>
+{% endblock %}

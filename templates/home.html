@@ -1,7 +1,8 @@
-<!DOCTYPE html>
-<html>
-
-<body>
+{% extends "base.html" %}
+{% block css %}{{block.super}}
+{% endblock %}
+{% block content %}
+{% load static %}
     <h2>HOMEPAGE</h2>
 
     {% if user.is_superuser %}
@@ -18,6 +19,4 @@
         <a href="{% url 'login' %}">Log In</a>
         <a href="{% url 'accounts:signup' %}">Sign Up</a>
     {% endif %}
-</body>
-</html>
-
+{% endblock %}
