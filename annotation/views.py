@@ -28,7 +28,7 @@ def index(request):
     except (Video.DoesNotExist, IndexError, Video.MultipleObjectsReturned) as e:
         available_video = None
     try:
-        tools = [t.get_tools() for t in Tools.objects.filter(tools_video=available_video)][0] #TODO: is it actually 0? getting most recent?
+        tools = [t.get_tools() for t in Tools.objects.filter(tools_video=available_video)][-1] #TODO: is it actually 0? getting most recent?
     except:
         tools = None
     try:
