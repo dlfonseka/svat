@@ -160,6 +160,15 @@
 
                 {% endif %}
             </div>
+
+            <div>
+                <form action="{% url 'annotation:output_csv' video_name=available_video.video.name|slugify %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="Download CSV Data">
+                </form>
+            </div>
+
+
             <!-- ANNOTATION DISPLAY -->
             <div>
                 {% if annotation_list %}

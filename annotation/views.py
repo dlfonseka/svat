@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.contrib.auth.decorators import login_required
+from django.utils.text import slugify
 import csv
 import os
 
@@ -126,16 +127,28 @@ def add_tools(request):
             return render(request, 'annotation/error.html', context)
 
 @login_required
-def output_csv(request):
-    # Create the HttpResponse object with the appropriate CSV header.
-    response = HttpResponse(
-        content_type='text/csv',
-        headers={'Content-Disposition': 'attachment; filename="somefilename.csv"'},
-    )
+def output_csv(request, *args, **kwargs):
+    if request.method == 'POST':
+        video_slug = kwargs['video_name']
+        slug_dict = dict(zip([slugify(v.video.name) for v in Video.objects.all()], [v.video.name for v in Video.objects.all()]))
+        video = Video.objects.get(video=slug_dict[video_slug]) #NOTE: this relies on all video names correspoding to unique slugs (important assumption)
+        fname = str(video).split('.')[0]
+        response = HttpResponse(
+            content_type='text/csv',
+            headers={'Content-Disposition': 'attachment; filename="{fname}.csv"'.format(fname=fname)},
+        )
+        writer = csv.writer(response)
+        writer.writerow(['video', 'annotation_type', 'point_timestamp', 'segment_start', 'segment_end', 'point_tool', 'segment_text'])
 
-    writer = csv.writer(response)
-    writer.writerow(['First row', 'Foo', 'Bar', 'Baz'])
-    writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
+        points = PointAnnotation.objects.filter(point_annotation_video=video)
+        segments = SegmentAnnotation.objects.filter(segment_annotation_video=video)
+        data = list(points) + list(segments)
+        data.sort(key=lambda t: t.point_annotation_timestamp if 'point_annotation_timestamp' in str(t._meta.get_fields()) else t.segment_annotation_starttime)
+        for d in data:
+            if isinstance(d, PointAnnotation):
+                writer.writerow([d.point_annotation_video, 'point', d.point_annotation_timestamp, '', '', d.point_annotation_tool, ''])
+            else:
+                writer.writerow([d.segment_annotation_video, 'segment', '', d.segment_annotation_starttime, d.segment_annotation_endtime, '', d.segment_annotation_text])
 
     return response
 
