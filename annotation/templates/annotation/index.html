@@ -4,13 +4,9 @@
 {% endblock %}
 {% block content %}
 {% load static %}
-<<<<<<< Updated upstream
-        <meta charset='UTF-8'>
-=======
 
 <div class="row">
     <div class="column">
->>>>>>> Stashed changes
         <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
         <script src="{% static 'js/annotation.js' %}"></script>
         <script src="{% static 'js/videojs-rotatezoom/src/videojs-rotatezoom.js' %}"></script>
@@ -26,16 +22,9 @@
                     autoplay
                     muted
                     width="640"
-<<<<<<< Updated upstream
-                    height="264"
-                    data-setup='{}'
-                    >
-
-=======
                     height="360"
                     data-setup="{}"
                 >
->>>>>>> Stashed changes
                     <source src='{{MEDIA_URL}}{{available_video}}' type="video/mp4" />
                     <source src='{{MEDIA_URL}}{{available_video}}' type="video/webm" />
                     <p class="vjs-no-js">

@@ -109,3 +109,11 @@ nav ul{
   text-align: center;
   margin-top: 150px;
 }
+
+h1.error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  margin-top: 150px;
+}

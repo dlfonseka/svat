@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
-    Error
-    Go back to <a href="{% url 'annotation:index' %}">Annotation Page</a>
+    <h1 class='error'>Error. Go back to <a href="{% url 'annotation:index' %}">Annotation Page</a></h1>
+    
     {% if video_errors %}
-        {{video_errors}}
+        <h1>{{video_errors.video}}</h1>
     {% endif %}
 
     {% if annotation_errors %}
