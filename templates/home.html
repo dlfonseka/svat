@@ -3,20 +3,7 @@
 {% endblock %}
 {% block content %}
 {% load static %}
-    <h2>HOMEPAGE</h2>
+    
+<h1 id='hometitle'>Welcome to the Surgical Video Annotation Tool!</h1>
 
-    {% if user.is_superuser %}
-        Hi {{user.username}}!
-        <a href="{% url 'annotation:index' %}">Annotation Page</a>
-        <a href="/admin">Admin Page</a>
-        <a href="{% url 'logout' %}">Log Out</a>
-    {% elif user.is_authenticated %}
-        Hi {{user.username}}!
-        <a href="{% url 'annotation:index' %}">Annotation Page</a>
-        <a href="{% url 'logout' %}">Log Out</a>
-    {% else %}
-        <p>You are not logged in.</p>
-        <a href="{% url 'login' %}">Log In</a>
-        <a href="{% url 'accounts:signup' %}">Sign Up</a>
-    {% endif %}
 {% endblock %}

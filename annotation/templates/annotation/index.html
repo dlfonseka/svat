@@ -1,16 +1,23 @@
 {% extends "base.html" %}
 {% block css %}{{block.super}}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/annotation.css">
 {% endblock %}
 {% block content %}
 {% load static %}
+<<<<<<< Updated upstream
         <meta charset='UTF-8'>
+=======
+
+<div class="row">
+    <div class="column">
+>>>>>>> Stashed changes
         <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
         <script src="{% static 'js/annotation.js' %}"></script>
         <script src="{% static 'js/videojs-rotatezoom/src/videojs-rotatezoom.js' %}"></script>
         <!--<script src="{% static 'js/rotate.js' %}"></script>-->
         {% if available_video %}
         <!-- VIDEO PLAYER -->
-            <div>
+            <div class='video'>
                 <video
                     id="my-video"
                     class='video-js vjs-big-play-centered'
@@ -19,10 +26,16 @@
                     autoplay
                     muted
                     width="640"
+<<<<<<< Updated upstream
                     height="264"
                     data-setup='{}'
                     >
 
+=======
+                    height="360"
+                    data-setup="{}"
+                >
+>>>>>>> Stashed changes
                     <source src='{{MEDIA_URL}}{{available_video}}' type="video/mp4" />
                     <source src='{{MEDIA_URL}}{{available_video}}' type="video/webm" />
                     <p class="vjs-no-js">
@@ -65,16 +78,17 @@
         {% endif %}
         
         <!-- VIDEO UPLOAD MODEL FORM -->
-        <div>
+        <div class=uploadform>
+            <h4>Select Video:</h4>
             {% if video_model_form %}
             {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
             {% if video_errors %}{{video_errors}} {% endif %}
-            <form action="{% url 'annotation:add_video' %}" method="post" enctype="multipart/form-data">
+            <form class=videouploadform action="{% url 'annotation:add_video' %}"  method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{video_model_form.non_field_errors}}
                 <div class="fieldWrapper">
                     {{ video_model_form.video.errors }}
-                    <label for="{{ video_model_form.video.id_for_label }}">Video:</label>
+                    <label for="{{ video_model_form.video.id_for_label }}"></label>
                     {{ video_model_form.video }}
                 </div>
                 <div class="fieldWrapper">
@@ -88,7 +102,8 @@
 
         <!-- TOOLS MODEL FORM -->
         {% if available_video %}
-            <div>
+            <div class=uploadform>
+                <h4>Select Tools File:</h4>
                 {% if tools_model_form %}
                 {% if error_message %} <p><strong>{{error_message}}</strong></p> {% endif %}
                 {% if tools_errors %}{{tools_errors}} {% endif %}
@@ -97,7 +112,7 @@
                     {{tools_model_form.non_field_errors}}
                     <div class="fieldWrapper">
                         {{ tools_model_form.tools_file.errors }}
-                        <label for="{{ video_model_form.tools_file.id_for_label }}">Tools CSV File:</label>
+                        <label for="{{ video_model_form.tools_file.id_for_label }}"></label>
                         {{ tools_model_form.tools_file }}
                     </div>
                     <div class="fieldWrapper">
@@ -123,13 +138,13 @@
                     {% if segment_annotation_errors %}{{segment_annotation_errors}} {% endif %}
 
                     <div>
-                        <button id='timepoint_toggle' name='timepoint' onclick="showhide('timepoint'); playpause();">Time-Point Annotation</button>
-                        <button id='timesegment_toggle' name='timesegment' onclick="showhide('timesegment'); timestamp('id_segment_annotation_starttime')";>Time-Segment Annotation</button>
+                        <button id='timepoint_toggle' name='timepoint' class=annotationbutton onclick="showhide('timepoint'); playpause();">Time-Point Annotation</button>
+                        <button id='timesegment_toggle' name='timesegment' class=annotationbutton onclick="showhide('timesegment'); timestamp('id_segment_annotation_starttime')";>Time-Segment Annotation</button>
                     </div>
 
                     <!-- POINT -->
-                    <div id='timepoint' style='visibility:hidden;'>
-                        <form action="{% url 'annotation:add_point_annotation' %}", method="post">
+                    <div id='timepoint' style='visibility:hidden;' class=hidden>
+                        <form action="{% url 'annotation:add_point_annotation' %}" method="post">
                             {% csrf_token %}
                             {{point_annotation_model_form.non_field_errors}}
                             <div class="fieldWrapper">
@@ -142,7 +157,7 @@
                             </div>
                             <div class="fieldWrapper">
                                 {{ point_annotation_model_form.point_annotation_tool.errors }}
-                                <label for="{{ point_annotation_model_form.point_annotation_tool.id_for_label }}">Annotation tool:</label>
+                                <label for="{{ point_annotation_model_form.point_annotation_tool.id_for_label }}" class=uploadlabel>Annotation tool:</label>
                                 <select name="point_annotation_tool" id="id_point_annotation_tool">
                                     <option value="" selected disabled>Select Tool</option>
                                     {% for tool in tools %}
@@ -150,12 +165,12 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <input type='submit' value='Save Annotation' onclick="timestamp('id_point_annotation_timestamp'); play();"/>
+                            <input type='submit' value='Save Annotation' onclick="timestamp('id_point_annotation_timestamp'); play();" class=submitannotation/>
                         </form>
                     </div>
 
                     <!-- SEGMENT -->
-                    <div id='timesegment' style='visibility:hidden;'>
+                    <div id='timesegment' style='visibility:hidden;' class=hidden>
                         <form action="{% url 'annotation:add_segment_annotation' %}", method="post">
                             {% csrf_token %}
                             {{segment_annotation_model_form.non_field_errors}}
@@ -178,7 +193,7 @@
                                 <input type="hidden" name="segment_annotation_endtime" id="id_segment_annotation_endtime">
                             </div>
                             <!-- <button id='start' onclick="timestamp('id_segment_annotation_starttime'); ;">Start Segment</button> -->
-                            <input type='submit' value='End and Save Segment Annotation' onclick="timestamp('id_segment_annotation_endtime')"/>
+                            <input type='submit' value='End and Save Segment Annotation' onclick="timestamp('id_segment_annotation_endtime')" class=submitannotation/>
                         </form>
                     </div>
 
@@ -188,27 +203,32 @@
                 {% endif %}
             </div>
 
-            <div>
-                <form action="{% url 'annotation:output_csv' video_name=available_video.video.name|slugify %}" method="POST">
-                    {% csrf_token %}
-                    <input type="submit" value="Download CSV Data">
-                </form>
-            </div>
 
-
+     </div>
+    <div class="column">
             <!-- ANNOTATION DISPLAY -->
-            <div>
+            <div class='annotationlist'>
                 {% if annotation_list %}
                     <h3> List of Annotations </h3> 
-                    <ul>
-                        {% for annotation in annotation_list %}
-                        <li>{{error}}  {{annotation.point_annotation_tool}} {{annotation.segment_annotation_text}} {{annotation.point_annotation_timestamp}} {{annotation.segment_annotation_starttime}} {% if annotation.segment_annotation_starttime %}{{"-"}} {% endif %} {{annotation.segment_annotation_endtime}}</li>
-                        {% endfor %}
-                    </ul>
+                    <nav>
+                        <ul>
+                            {% for annotation in annotation_list %}
+                            <li>{{error}}  {{annotation.point_annotation_tool}} {{annotation.segment_annotation_text}} {{annotation.point_annotation_timestamp}} {{annotation.segment_annotation_starttime}} {% if annotation.segment_annotation_starttime %}{{"-"}} {% endif %} {{annotation.segment_annotation_endtime}}</li>
+                            {% endfor %}
+                        </ul>
+                    </nav>
                     {% else %}
                         <p>No annotations recorded. </p>
                 {% endif %}
             </div>
+            <div >
+                <form action="{% url 'annotation:output_csv' video_name=available_video.video.name|slugify %}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="Download CSV Data" class='csvdownload'>
+                </form>
+            </div>
 
+    </div>
+</div> 
         {% endif %}
 {% endblock %}

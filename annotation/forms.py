@@ -19,6 +19,10 @@ class VideoForm(forms.ModelForm):
     class Meta:
         model = Video
         exclude = []
+    
+    def __init__(self, *args, **kwargs):
+        super(VideoForm, self).__init__(*args, **kwargs)
+        self.fields['video'].widget.attrs.update({'class' : 'uploadbutton'})
 
     def clean_video(self):
         vid = self.cleaned_data['video']
