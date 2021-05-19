@@ -24,7 +24,9 @@ This application is currently configured to be run in a development environment.
 
 ### Supported Browsers and Media
 
-# Deployment
+This application is designed to run on the latest versions of Mozilla Firefox (88.0.1) and Google Chrome (90.0.4430.212). Make sure to check for [browser supported video formats](https://www.encoding.com/html5-video-codec/).
+
+### Deployment
 
 
 
