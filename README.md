@@ -39,8 +39,6 @@ This application is designed to run on the latest versions of Mozilla Firefox (8
 
 ### Deployment
 
-
-
-
+For information on deploying this Django project into a production environement, see the detailed [documentation](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Deployment).
 
   
