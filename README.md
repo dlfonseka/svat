@@ -14,6 +14,17 @@ This application is currently configured to be run in a development environment.
 
 2). Clone this repository into the desired location in your filesystem. 
 
+3). In the root of the *svat* directory, create the file `secrets.json` with the following content:
+
+```
+{
+    "secret_key": "YOUR_SECRET_KEY_GOES_HERE",
+    "debug": true
+}
+```
+
+Your [secret key](https://docs.djangoproject.com/en/3.2/ref/settings/#secret-key) will obviously replace the placeholder, and debug should be changed to false if you are deploying in a [production environment](#deployment).
+
 3). In your terminal, navigate into the *svat* directory.
 
 4). Type the command: `python manage.py migrate` to create the application's SQLite database.
